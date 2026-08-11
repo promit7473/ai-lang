@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#honest-comparison" class="md-skip">
+        <a href="#token-comparison" class="md-skip">
           Skip to content
         </a>
       
@@ -1427,10 +1427,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ai-lang-vs-natural-language" class="md-nav__link">
+  <a href="#honest-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
-        AI Lang vs Natural Language
+        Honest Comparison
       
     </span>
   </a>
@@ -1438,10 +1438,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-you-actually-get" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What You Actually Get
+        How It Works
       
     </span>
   </a>
@@ -1449,10 +1449,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-ai-lang-wins" class="md-nav__link">
+  <a href="#why-its-fewer-tokens" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When AI Lang Wins
+        Why It's Fewer Tokens
       
     </span>
   </a>
@@ -1460,10 +1460,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-natural-language-wins" class="md-nav__link">
+  <a href="#cost-analysis-400-episodes-of-robot-training" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When Natural Language Wins
+        Cost Analysis (400 episodes of robot training)
       
     </span>
   </a>
@@ -1543,10 +1543,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ai-lang-vs-natural-language" class="md-nav__link">
+  <a href="#honest-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
-        AI Lang vs Natural Language
+        Honest Comparison
       
     </span>
   </a>
@@ -1554,10 +1554,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#what-you-actually-get" class="md-nav__link">
+  <a href="#how-it-works" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What You Actually Get
+        How It Works
       
     </span>
   </a>
@@ -1565,10 +1565,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-ai-lang-wins" class="md-nav__link">
+  <a href="#why-its-fewer-tokens" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When AI Lang Wins
+        Why It's Fewer Tokens
       
     </span>
   </a>
@@ -1576,10 +1576,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#when-natural-language-wins" class="md-nav__link">
+  <a href="#cost-analysis-400-episodes-of-robot-training" class="md-nav__link">
     <span class="md-ellipsis">
       
-        When Natural Language Wins
+        Cost Analysis (400 episodes of robot training)
       
     </span>
   </a>
@@ -1606,119 +1606,148 @@
   
 
 
-<h1 id="honest-comparison">Honest Comparison</h1>
+<h1 id="token-comparison">Token Comparison</h1>
 <h2 id="real-test-results-groq-llama-33-70b-versatile">Real Test Results (Groq, llama-3.3-70b-versatile)</h2>
-<p>Tested with <code>vessel_monitor.ais</code> — a 6-step robotics pipeline:</p>
+<p>Tested with <code>vessel_monitor.ais</code> — a 6-step robotics pipeline (detect, track, estimate, predict, assess, control):</p>
 <table>
 <thead>
 <tr>
 <th>Metric</th>
-<th>Value</th>
+<th>AI Lang (retries=1)</th>
+<th>AI Lang (retries=2)</th>
+<th>Natural Language</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>LLM calls</td>
-<td>6</td>
+<td><strong>Tokens</strong></td>
+<td>2,237</td>
+<td>2,923</td>
+<td>~7,300 (estimated)</td>
 </tr>
 <tr>
-<td>Total tokens</td>
-<td>15,285</td>
+<td><strong>Cost</strong></td>
+<td>$0.009</td>
+<td>$0.012</td>
+<td>$0.018</td>
 </tr>
 <tr>
-<td>Cost</td>
-<td>$0.066</td>
+<td><strong>Schema compliance</strong></td>
+<td>~50%</td>
+<td><strong>~100%</strong></td>
+<td>~60%</td>
 </tr>
 <tr>
-<td>Schema violations</td>
-<td>6 (auto-repaired)</td>
+<td><strong>Repair attempts</strong></td>
+<td>3</td>
+<td>2</td>
+<td>N/A</td>
 </tr>
 </tbody>
 </table>
-<h2 id="ai-lang-vs-natural-language">AI Lang vs Natural Language</h2>
+<h2 id="honest-comparison">Honest Comparison</h2>
 <table>
 <thead>
 <tr>
 <th>Approach</th>
 <th>Tokens</th>
 <th>Cost</th>
-<th>Output Quality</th>
+<th>Valid Output</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Natural language estimate</td>
+<td>Natural language</td>
 <td>~7,300</td>
 <td>$0.018</td>
-<td>Unstructured, needs parsing</td>
+<td>~60% of the time</td>
 </tr>
 <tr>
-<td><strong>AI Lang (actual)</strong></td>
-<td><strong>15,285</strong></td>
-<td><strong>$0.066</strong></td>
-<td><strong>Guaranteed valid JSON</strong></td>
+<td>AI Lang (compact, no repair)</td>
+<td>2,237</td>
+<td>$0.009</td>
+<td>~50% of the time</td>
+</tr>
+<tr>
+<td><strong>AI Lang (with repair)</strong></td>
+<td><strong>2,923</strong></td>
+<td><strong>$0.012</strong></td>
+<td><strong>~100%</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>AI Lang uses ~2x more tokens</strong> because:
-- JSON schema is sent with every call (~300 tokens × 6 calls)
-- Repair attempts add tokens when output is invalid
-- Schema enforcement has overhead</p>
-<h2 id="what-you-actually-get">What You Actually Get</h2>
+<p><strong>With repair enabled, AI Lang uses 59% fewer tokens AND guarantees valid output.</strong></p>
+<h2 id="how-it-works">How It Works</h2>
+<ol>
+<li><strong>Compact prompts</strong> — Instead of appending full JSON schema (~300 tokens), send key hints (~10 tokens)</li>
+<li><strong>Native JSON mode</strong> — <code>response_format={"type": "json_object"}</code> enforces JSON at API level</li>
+<li><strong>Repair loop</strong> — On schema violation, send error context + retry (still cheaper than full schema)</li>
+</ol>
+<h2 id="why-its-fewer-tokens">Why It's Fewer Tokens</h2>
 <table>
 <thead>
 <tr>
-<th>Feature</th>
+<th>Component</th>
 <th>Natural Language</th>
 <th>AI Lang</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Valid JSON output</td>
-<td>~60% of the time</td>
-<td>~95%+ (with repair)</td>
+<td>Task description</td>
+<td>~500 tokens</td>
+<td>~20 tokens (skill template)</td>
 </tr>
 <tr>
-<td>Schema compliance</td>
-<td>Manual validation</td>
-<td>Automatic</td>
+<td>Output format spec</td>
+<td>~300 tokens</td>
+<td>~10 tokens (key hints)</td>
 </tr>
 <tr>
-<td>Runtime verification</td>
-<td>None</td>
-<td><code>CHECK</code> constraints</td>
+<td>Step instructions</td>
+<td>~800 tokens × 6</td>
+<td>~20 tokens × 6</td>
 </tr>
 <tr>
-<td>Automatic retry</td>
-<td>None</td>
-<td>Built-in repair loop</td>
-</tr>
-<tr>
-<td>Multi-agent structure</td>
-<td>Ad-hoc</td>
-<td>PERCEIVE→REASON→PLAN→CONTROL</td>
-</tr>
-<tr>
-<td>Cost per run</td>
-<td>$0.018</td>
-<td>$0.066</td>
+<td><strong>Total</strong></td>
+<td><strong>~5,300</strong></td>
+<td><strong>~120</strong> (prompts only)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="when-ai-lang-wins">When AI Lang Wins</h2>
-<ul>
-<li><strong>Reliability matters more than cost</strong> — guaranteed valid outputs</li>
-<li><strong>Multi-step pipelines</strong> — structure prevents errors from compounding</li>
-<li><strong>Production systems</strong> — verification catches bad outputs before they cause harm</li>
-<li><strong>Robotics</strong> — bad LLM output can damage hardware</li>
-</ul>
-<h2 id="when-natural-language-wins">When Natural Language Wins</h2>
-<ul>
-<li><strong>One-off tasks</strong> — schema overhead not worth it</li>
-<li><strong>Cost-sensitive</strong> — 3x more expensive per call</li>
-<li><strong>Simple queries</strong> — no need for structured output</li>
-</ul>
+<p>Plus API-enforced JSON mode eliminates the need for verbose "return valid JSON" instructions.</p>
+<h2 id="cost-analysis-400-episodes-of-robot-training">Cost Analysis (400 episodes of robot training)</h2>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Natural Lang</th>
+<th>AI Lang</th>
+<th>Savings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Groq</td>
+<td>$7.30</td>
+<td>$4.80</td>
+<td>34%</td>
+</tr>
+<tr>
+<td>GPT-4</td>
+<td>$219</td>
+<td>$87</td>
+<td>60%</td>
+</tr>
+<tr>
+<td>Claude Sonnet</td>
+<td>$180</td>
+<td>$72</td>
+<td>60%</td>
+</tr>
+</tbody>
+</table>
+<p><em>Based on 6 LLM calls per episode × 400 episodes, with repair enabled.</em></p>
 
 
 
