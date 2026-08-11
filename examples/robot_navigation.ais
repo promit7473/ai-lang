@@ -1,0 +1,45 @@
+TASK robot_navigation {
+    INPUT {
+        episodes = 400,
+        max_steps = 150,
+        eval_episodes = 5,
+        seed = 42
+    }
+
+    COMPUTE {
+        world = create_world(seed)
+        state_size = 38
+        action_size = 9
+        agent = create_agent(state_size, action_size)
+
+        successes = 0
+
+        FOR ep IN 1..episodes {
+            result = train_episode(agent, world, max_steps)
+
+            IF result.success {
+                successes = successes + 1
+            }
+
+            IF ep % 50 == 0 {
+                ep_float = ep
+                success_rate = successes / ep_float
+                LOG "Episode {ep}: successes={successes}, rate={success_rate}"
+            }
+        }
+
+        LOG "Training complete. Evaluating..."
+        eval_results = evaluate_agent(agent, world, eval_episodes)
+        success_rate = eval_results.success_rate
+        LOG "Final success rate: {success_rate}"
+    }
+
+    OUTPUT {
+        success_rate,
+        eval_results
+    }
+
+    VERIFY {
+        CHECK success_rate >= 0.0
+    }
+}

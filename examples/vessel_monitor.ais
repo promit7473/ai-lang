@@ -1,0 +1,38 @@
+TASK vessel_monitor {
+    INPUT {
+        camera: Camera,
+        target_id: string
+    }
+
+    PERCEIVE {
+        objects = detect_objects(camera)
+        tracks = track_objects(objects, camera)
+    }
+
+    REASON {
+        state = estimate_state(tracks)
+        trajectory = predict_path(state, horizon=5.0)
+        risk = assess_collision(trajectory)
+    }
+
+    PLAN {
+        OBJECTIVE minimize risk
+        OBJECTIVE maximize tracking_accuracy
+        CONSTRAINT risk < 0.3
+    }
+
+    CONTROL {
+        command = generate_command(state, trajectory)
+    }
+
+    OUTPUT {
+        trajectory: Path,
+        risk: float,
+        command: Control
+    }
+
+    VERIFY {
+        CHECK constraints_satisfied
+        CHECK schema_valid
+    }
+}
