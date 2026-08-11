@@ -126,6 +126,8 @@ class AIRuntime:
         prompt = skill.build_prompt(**resolved_kwargs, **{f"arg{i}": a for i, a in enumerate(resolved_args)})
         output = None
 
+        response_format = {"type": "json_object"}
+
         for attempt in range(1, self.max_retries + 1):
             if not self._check_budget(result):
                 return
@@ -134,7 +136,7 @@ class AIRuntime:
             self._emit_event(result, "llm_call", {"skill": node.func, "attempt": attempt})
 
             try:
-                llm_response = self.llm.call(prompt, context=dict(self._state))
+                llm_response = self.llm.call(prompt, context=dict(self._state), response_format=response_format)
             except Exception as e:
                 result.log.append(f"  [{node.id}] LLM error: {e}")
                 self._emit_event(result, "llm_error", {"skill": node.func, "error": str(e)})

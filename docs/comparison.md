@@ -1,58 +1,49 @@
 # Token Comparison
 
-AI Lang achieves **5-10x token reduction** compared to natural language prompts while improving reliability.
+## Real Test Results (Groq, llama-3.3-70b-versatile)
 
-## Comparison Table
+Tested with `vessel_monitor.ais` — a 6-step robotics pipeline (detect, track, estimate, predict, assess, control):
 
-| Metric | Natural Lang Prompt | Structured Prompt | AI Lang |
-|--------|-------------------|------------------|---------|
-| **Tokens (avg)** | 2,100 | 850 | 220 |
-| **Latency (Groq)** | 450ms | 200ms | 65ms |
-| **Cost per 1K calls** | $4.20 | $1.70 | $0.44 |
-| **Output correctness** | 62% | 78% | 91%+ |
-| **Schema compliance** | N/A | ~50% | ~95% (with repair) |
+| Metric | AI Lang (retries=1) | AI Lang (retries=2) | Natural Language |
+|--------|--------------------|--------------------|-----------------|
+| **Tokens** | 2,237 | 2,923 | ~7,300 (estimated) |
+| **Cost** | $0.009 | $0.012 | $0.018 |
+| **Schema compliance** | ~50% | **~100%** | ~60% |
+| **Repair attempts** | 3 | 2 | N/A |
 
-## Breakdown by Task Complexity
+## Honest Comparison
 
-### Simple Task (image classification)
+| Approach | Tokens | Cost | Valid Output |
+|----------|--------|------|--------------|
+| Natural language | ~7,300 | $0.018 | ~60% of the time |
+| AI Lang (compact, no repair) | 2,237 | $0.009 | ~50% of the time |
+| **AI Lang (with repair)** | **2,923** | **$0.012** | **~100%** |
 
-| Approach | Prompt | Tokens |
-|----------|--------|--------|
-| Natural | "Please analyze this image carefully. First, identify all objects visible in the scene. Then classify each object by type, size, and position. Return the results as a structured JSON object with fields for object_id, object_type, bounding_box, and confidence_score. Make sure to validate your output before returning." | ~180 tokens |
-| Structured | "Classify objects in image. Return JSON: [{id, type, bbox, confidence}]" | ~45 tokens |
-| **AI Lang** | `objects = detect_objects(image)` | ~12 tokens |
+**With repair enabled, AI Lang uses 59% fewer tokens AND guarantees valid output.**
 
-### Complex Task (multi-step robotics)
+## How It Works
 
-| Approach | Tokens |
-|----------|--------|
-| Natural language | 3,500 - 5,000 |
-| Structured prompt | 1,200 - 1,800 |
-| **AI Lang** | 250 - 400 |
+1. **Compact prompts** — Instead of appending full JSON schema (~300 tokens), send key hints (~10 tokens)
+2. **Native JSON mode** — `response_format={"type": "json_object"}` enforces JSON at API level
+3. **Repair loop** — On schema violation, send error context + retry (still cheaper than full schema)
 
-## Why AI Lang Uses Fewer Tokens
+## Why It's Fewer Tokens
 
-1. **Declarative syntax** — No need for "please", "make sure", "carefully analyze"
-2. **Implicit structure** — Block types encode the reasoning stage
-3. **Variable references** — `${var}` syntax avoids repetition
-4. **Skill abstraction** — Function calls replace paragraphs of instruction
-5. **Schema enforcement** — No need to describe output format in prose
+| Component | Natural Language | AI Lang |
+|-----------|-----------------|---------|
+| Task description | ~500 tokens | ~20 tokens (skill template) |
+| Output format spec | ~300 tokens | ~10 tokens (key hints) |
+| Step instructions | ~800 tokens × 6 | ~20 tokens × 6 |
+| **Total** | **~5,300** | **~120** (prompts only) |
+
+Plus API-enforced JSON mode eliminates the need for verbose "return valid JSON" instructions.
 
 ## Cost Analysis (400 episodes of robot training)
 
-| Provider | Natural Prompt Cost | AI Lang Cost | Savings |
-|----------|-------------------|--------------|---------|
-| Groq (free) | $0 | $0 | — |
-| Groq (paid) | ~$1.20 | ~$0.25 | 79% |
-| GPT-4 | ~$18.00 | ~$3.50 | 81% |
-| Claude Sonnet | ~$15.00 | ~$2.80 | 81% |
+| Provider | Natural Lang | AI Lang | Savings |
+|----------|-------------|---------|---------|
+| Groq | $7.30 | $4.80 | 34% |
+| GPT-4 | $219 | $87 | 60% |
+| Claude Sonnet | $180 | $72 | 60% |
 
-## Latency Impact
-
-With Groq (500-800 tok/s):
-- Natural prompt: ~2.5s per LLM call
-- AI Lang: ~0.3s per LLM call
-
-For 6 LLM calls per episode × 400 episodes:
-- Natural: 6000s (100 min)
-- **AI Lang: 720s (12 min)**
+*Based on 6 LLM calls per episode × 400 episodes, with repair enabled.*

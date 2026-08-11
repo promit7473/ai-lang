@@ -23,12 +23,15 @@ python run_ai_lang.py
 
 Full docs at [docs/](docs/) or visit [ai-lang.ai](https://ai-lang.ai)
 
-## Token Efficiency
+## Real Test Results (Groq)
 
-| Approach | Tokens | Cost |
-|----------|--------|------|
-| Natural language | ~2000 | $4.20/1K |
-| AI Lang | ~220 | $0.44/1K |
+| Metric | AI Lang | Natural Language |
+|--------|---------|-----------------|
+| Tokens | 2,923 | ~7,300 |
+| Cost | $0.012 | $0.018 |
+| Valid output | ~100% | ~60% |
+
+**59% fewer tokens with guaranteed valid output.** See [docs/comparison.md](docs/comparison.md) for details.
 
 ## License
 

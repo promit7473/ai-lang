@@ -121,8 +121,8 @@ class OpenAICompatibleLLM(BaseLLM):
     def call(self, prompt: str, context: dict = None, response_format: dict = None) -> LLMResponse:
         messages = []
         if context:
-            context_str = json.dumps(context, default=str, indent=2) if isinstance(context, dict) else str(context)
-            messages.append({"role": "system", "content": f"Context:\n{context_str}"})
+            context_str = json.dumps(context, default=str) if isinstance(context, dict) else str(context)
+            messages.append({"role": "system", "content": f"Context: {context_str}"})
         messages.append({"role": "user", "content": prompt})
 
         kwargs = {}
@@ -132,6 +132,7 @@ class OpenAICompatibleLLM(BaseLLM):
         response = self._get_client().chat.completions.create(
             model=self.model,
             messages=messages,
+            **kwargs,
         )
 
         content = response.choices[0].message.content

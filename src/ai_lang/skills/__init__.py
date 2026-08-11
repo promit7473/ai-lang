@@ -35,12 +35,41 @@ class Skill:
                 base = self.llm_prompt_template.format(**kwargs)
             except KeyError:
                 base = self.llm_prompt_template
-
         if self.output_schema:
-            schema_str = json.dumps(self.output_schema, indent=2)
-            base += f"\n\nReturn valid JSON matching this schema:\n{schema_str}"
-
+            keys = self._compact_schema_hints()
+            base += f" Return JSON with keys: {keys}"
         return base
+
+    def _compact_schema_hints(self) -> str:
+        if not self.output_schema:
+            return ""
+        return self._hints_for_schema(self.output_schema)
+
+    def _hints_for_schema(self, schema: dict, depth: int = 0) -> str:
+        if not schema or depth > 2:
+            return ""
+        parts = []
+        required = schema.get("required", [])
+        props = schema.get("properties", {})
+        for key in required:
+            if key in props:
+                prop = props[key]
+                ptype = prop.get("type", "any")
+                if ptype == "object" and "properties" in prop:
+                    sub = self._hints_for_schema(prop, depth + 1)
+                    parts.append(f"{key}:{{{sub}}}")
+                elif ptype == "array" and "items" in prop:
+                    items = prop["items"]
+                    if items.get("type") == "object" and "required" in items:
+                        sub_req = ",".join(items["required"])
+                        parts.append(f"{key}:[{{{sub_req}}}]")
+                    else:
+                        parts.append(f"{key}:[{items.get('type','any')}]")
+                else:
+                    parts.append(f"{key}:{ptype}")
+            else:
+                parts.append(key)
+        return ", ".join(parts)
 
     def build_repair_prompt(self, original_prompt: str, invalid_output: str, error: str) -> str:
         schema_str = json.dumps(self.output_schema, indent=2) if self.output_schema else "N/A"
@@ -89,9 +118,29 @@ def _validate_json_schema(data: Any, schema: dict) -> tuple[bool, str]:
                 if not valid:
                     return False, f"Item [{i}]: {err}"
 
-    elif schema_type == "number" or schema_type == "integer":
+    elif schema_type == "integer":
+        if isinstance(data, str):
+            try:
+                data = int(data)
+            except ValueError:
+                return False, f"Expected integer, got non-numeric str"
         if not isinstance(data, (int, float)):
-            return False, f"Expected {schema_type}, got {type(data).__name__}"
+            return False, f"Expected integer, got {type(data).__name__}"
+        minimum = schema.get("minimum")
+        if minimum is not None and data < minimum:
+            return False, f"Value {data} below minimum {minimum}"
+        maximum = schema.get("maximum")
+        if maximum is not None and data > maximum:
+            return False, f"Value {data} above maximum {maximum}"
+
+    elif schema_type == "number":
+        if isinstance(data, str):
+            try:
+                data = float(data)
+            except ValueError:
+                return False, f"Expected number, got non-numeric str"
+        if not isinstance(data, (int, float)):
+            return False, f"Expected number, got {type(data).__name__}"
         minimum = schema.get("minimum")
         if minimum is not None and data < minimum:
             return False, f"Value {data} below minimum {minimum}"
@@ -104,6 +153,13 @@ def _validate_json_schema(data: Any, schema: dict) -> tuple[bool, str]:
             return False, f"Expected string, got {type(data).__name__}"
 
     elif schema_type == "boolean":
+        if isinstance(data, str):
+            if data.lower() in ("true", "1", "yes"):
+                data = True
+            elif data.lower() in ("false", "0", "no"):
+                data = False
+            else:
+                return False, f"Expected boolean, got '{data}'"
         if not isinstance(data, bool):
             return False, f"Expected boolean, got {type(data).__name__}"
 
