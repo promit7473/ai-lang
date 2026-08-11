@@ -847,6 +847,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#training-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Training Progress
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#running" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1701,6 +1712,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#training-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Training Progress
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#running" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1755,6 +1777,8 @@
 
 <h1 id="robot-navigation-tutorial">Robot Navigation Tutorial</h1>
 <p>This tutorial trains a 2D mobile robot to navigate to a goal while avoiding obstacles using Deep Q-Network (DQN) reinforcement learning — all written in AI Lang.</p>
+<p><img alt="Initial robot state" src="../../assets/images/initial.png" />
+<em>Robot (blue circle) starts at bottom-left, goal (green star) is top-right, LiDAR rays shown in red/pink</em></p>
 <h2 id="the-ai-lang-program">The AI Lang Program</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>TASK robot_navigation {
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    INPUT {
@@ -1886,6 +1910,38 @@ Total: 38 dimensions</p>
 </tr>
 </tbody>
 </table>
+<h2 id="training-progress">Training Progress</h2>
+<p>The robot learns over 400 episodes. Here's how its behavior evolves:</p>
+<table>
+<thead>
+<tr>
+<th>Episode 50</th>
+<th>Episode 200</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Episode 50" src="../../assets/images/episode_50.png" /></td>
+<td><img alt="Episode 200" src="../../assets/images/episode_200.png" /></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Episode 300</th>
+<th>Episode 400</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Episode 300" src="../../assets/images/episode_300.png" /></td>
+<td><img alt="Episode 400" src="../../assets/images/episode_400.png" /></td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Final trajectory" src="../../assets/images/final_trajectory.png" />
+<em>Final trained policy navigating to goal</em></p>
 <h2 id="running">Running</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ai_lang</span><span class="w"> </span><span class="kn">import</span> <span class="n">execute</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ai_lang.skills</span><span class="w"> </span><span class="kn">import</span> <span class="n">sim2d</span><span class="p">,</span> <span class="n">rl_dqn</span>

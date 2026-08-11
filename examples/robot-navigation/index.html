@@ -1567,6 +1567,8 @@
 
 <h1 id="robot-navigation-example">Robot Navigation Example</h1>
 <p>Full example of training a 2D robot to navigate using Deep Q-Network.</p>
+<p><img alt="Robot Navigation" src="../../assets/images/initial.png" />
+<em>Initial state: robot (blue) at start, goal (green star) at target, obstacles in gray</em></p>
 <h2 id="program">Program</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>TASK robot_navigation {
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    INPUT {
@@ -1626,6 +1628,8 @@
 <a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="n">result</span> <span class="o">=</span> <span class="n">execute</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;robot_navigation.ais&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">extra_skills</span><span class="o">=</span><span class="n">skills</span><span class="p">)</span>
 <a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Success rate: </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;outputs&#39;</span><span class="p">][</span><span class="s1">&#39;success_rate&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
+<p><img alt="Final Trajectory" src="../../assets/images/final_trajectory.png" />
+<em>The trained robot successfully navigates to the goal while avoiding obstacles</em></p>
 <h2 id="see-also">See Also</h2>
 <ul>
 <li><a href="../../tutorials/robot-navigation/">Robot Navigation Tutorial</a></li>
